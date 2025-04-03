@@ -1,0 +1,16 @@
+@EC.RestfulToken.Server.Api_HostAddress = https://localhost:5001
+
+POST {{EC.RestfulToken.Server.Api_HostAddress}}/Token/
+Accept: application/json
+Authorization: Bearer ThisIsSomeSecureSecretHashGeneratedThroughByteTrickeryAndStuffAndEverything
+Content-Type: application/x-www-form-urlencoded
+
+UserId=A8D9A00A-16BD-4B04-A855-3BD626EBC1DE&DomainId=90E70F3A-4A0F-F011-89C2-80B655E9AB1F
+
+###
+
+GET {{EC.RestfulToken.Server.Api_HostAddress}}/TestContent/
+Accept: application/json
+Authorization: Bearer {put the access_token from the token call above here}
+
+###
