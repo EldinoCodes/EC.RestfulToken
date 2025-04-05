@@ -6,8 +6,14 @@ namespace EC.RestfulToken.Server.Api.Swagger;
 
 public class CustomSwaggerGenOptions : IConfigureOptions<SwaggerGenOptions>
 {
+
+    /// <summary>
+    /// This method is used to configure the SwaggerGenOptions for the API.
+    /// </summary>
+    /// <param name="options"></param>
     public void Configure(SwaggerGenOptions options)
     {
+        // setup the Swagger document security definition.
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",

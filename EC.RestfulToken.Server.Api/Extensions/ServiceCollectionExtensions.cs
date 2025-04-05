@@ -13,6 +13,7 @@ internal static class ServiceCollectionExtensions
     {
         var jwtKey = configuration.GetValue<string>("Jwt:Key");
         ArgumentException.ThrowIfNullOrEmpty(nameof(jwtKey));
+
         var jwtIssuer = configuration.GetValue<string>("Jwt:Issuer");
         ArgumentException.ThrowIfNullOrEmpty(nameof(jwtIssuer));
 

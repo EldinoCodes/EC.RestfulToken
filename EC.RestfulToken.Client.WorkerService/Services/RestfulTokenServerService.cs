@@ -39,24 +39,35 @@ internal class RestfulTokenServerService(ILogger<IRestfulTokenServerService> log
         return ret;
     }
 
+    /// <summary>
+    /// Any method that needs to call to the api with a token can use this method to pull the current token from the cache, but if one doesnt exist it will attempt to get it.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns>AuthToken</returns>
     protected virtual async Task<AuthToken?> GetTokenAsync(CancellationToken cancellationToken = default)
     {
         return await _memoryCache.GetOrCreateAsync("RestfulTokenServerToken", async (entry) =>
         {
             var uri = _configuration.GetValue<string>("RestfulTokenServer:Endpoint");
-            var domainId = _configuration.GetValue<Guid>("RestfulTokenServer:DomainId");
-            var userId = _configuration.GetValue<Guid>("RestfulTokenServer:UserId");
-            var userSecret = _configuration.GetValue<string>("RestfulTokenServer:UserSecret");
+            ArgumentException.ThrowIfNullOrEmpty(uri, nameof(uri));
+
+            var tenantId = _configuration.GetValue<string>("RestfulTokenServer:TenantId");
+            ArgumentException.ThrowIfNullOrEmpty(tenantId, nameof(tenantId));
+
+            var clientId = _configuration.GetValue<string>("RestfulTokenServer:ClientId");
+            ArgumentException.ThrowIfNullOrEmpty(clientId, nameof(clientId));
+
+            var clientSecret = _configuration.GetValue<string>("RestfulTokenServer:ClientSecret");
+            ArgumentException.ThrowIfNullOrEmpty(clientSecret, nameof(clientSecret));
 
             var data = await _httpService.ExecuteAsync(
                 "POST",
-                $"{uri}/token",
+                $"{uri}/Token/{tenantId}/",
                 new FormUrlEncodedContent(new Dictionary<string, string>
                 {
-                    {"domainId", domainId.ToString() },
-                    {"userId", userId.ToString() }
+                    {"clientId", clientId },
+                    {"clientSecret", clientSecret },
                 }),
-                (h) => h.Authorization = new AuthenticationHeaderValue("Bearer", userSecret),
                 cancellationToken: cancellationToken
             );
 
@@ -66,6 +77,8 @@ internal class RestfulTokenServerService(ILogger<IRestfulTokenServerService> log
             var now = DateTime.Now;
             entry.Value = token;
             entry.AbsoluteExpiration = now.AddSeconds(token.ExpiresIn - 10);
+
+            // add some logging to indicate when the token was acquired and when it expires.
             entry.PostEvictionCallbacks.Add(new PostEvictionCallbackRegistration()
             {
                 EvictionCallback = (key, value, reason, state) =>

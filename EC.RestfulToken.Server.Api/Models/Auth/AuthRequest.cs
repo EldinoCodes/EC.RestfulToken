@@ -6,6 +6,6 @@
  */
 public class AuthRequest
 {
-    public virtual Guid? UserId { get; set; }
-    public virtual Guid? DomainId { get; set; }
+    public virtual Guid? ClientId { get; set; }
+    public virtual string? ClientSecret { get; set; }
 }

@@ -59,7 +59,7 @@
     <Folder Include="dbo\Data" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\Domain.sql" />
+    <Build Include="dbo\Tables\Tenant.sql" />
     <Build Include="dbo\Tables\User.sql" />
     <Build Include="dbo\Tables\UserSecret.sql" />
     <PostDeploy Include="dbo\Data\Seed.sql" />

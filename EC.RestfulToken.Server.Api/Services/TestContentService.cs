@@ -9,8 +9,10 @@ public interface ITestContentService
 
 public class TestContentService(ILogger<TestContentService> logger) : ITestContentService
 {
-    private readonly ILogger<TestContentService> _logger = logger;
+    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+    private readonly ILogger<TestContentService> _logger = logger;
+    
     private readonly Random _random = new();
 
     public List<TestContent> GetTestData(CancellationToken cancellationToken = default)
@@ -31,12 +33,13 @@ public class TestContentService(ILogger<TestContentService> logger) : ITestConte
             });
         }
 
+        _logger.LogInformation("Random Test data generated: {0}", count);
+
         return ret;
     }
 
     protected virtual string RandomString(int length)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    {        
         var segment = Enumerable.Repeat(chars, length);
         var characters = segment.Select(c => c[_random.Next(c.Length)]).ToArray();
         return new string(characters);

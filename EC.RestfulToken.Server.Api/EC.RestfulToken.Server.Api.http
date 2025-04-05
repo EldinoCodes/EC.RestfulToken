@@ -1,11 +1,10 @@
 @EC.RestfulToken.Server.Api_HostAddress = https://localhost:5001
 
-POST {{EC.RestfulToken.Server.Api_HostAddress}}/Token/
+POST {{EC.RestfulToken.Server.Api_HostAddress}}/Token/90E70F3A-4A0F-F011-89C2-80B655E9AB1F
 Accept: application/json
-Authorization: Bearer ThisIsSomeSecureSecretHashGeneratedThroughByteTrickeryAndStuffAndEverything
 Content-Type: application/x-www-form-urlencoded
 
-UserId=A8D9A00A-16BD-4B04-A855-3BD626EBC1DE&DomainId=90E70F3A-4A0F-F011-89C2-80B655E9AB1F
+ClientId=A8D9A00A-16BD-4B04-A855-3BD626EBC1DE&ClientSecret=ThisIsSomeSecureSecretHashGeneratedThroughByteTrickeryAndStuffAndEverything
 
 ###
 

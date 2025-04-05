@@ -1,16 +1,18 @@
 using EC.RestfulToken.Client.WorkerService.Services;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace EC.RestfulToken.Client.WorkerService;
 
-public class Worker(ILogger<Worker> logger, IRestfulTokenServerService restfulTokenServerService, IMemoryCache memoryCache) : BackgroundService
+public class Worker(ILogger<Worker> logger, IConfiguration configuration, IRestfulTokenServerService restfulTokenServerService) : BackgroundService
 {
     private readonly ILogger<Worker> _logger = logger;
+    private readonly IConfiguration _configuration = configuration;
     private readonly IRestfulTokenServerService _restfulTokenServerService = restfulTokenServerService;
-    private readonly IMemoryCache _memoryCache = memoryCache;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var intervalSeconds = _configuration.GetValue<int>("IntervalSeconds");
+        if (intervalSeconds <= 0) throw new ArgumentException("IntervalSeconds must be greater than 0.");
+
         while (!stoppingToken.IsCancellationRequested)
         {
             var res = await _restfulTokenServerService.TestContentGetAllAsync(stoppingToken);
@@ -18,7 +20,7 @@ public class Worker(ILogger<Worker> logger, IRestfulTokenServerService restfulTo
             // should always get something unless the token is doa or the server is down
             _logger.LogWarning("TestContentGetAllAsync returned {1} record at {2}", [ res.Count, DateTime.Now ]);
 
-            await Task.Delay(TimeSpan.FromSeconds(15), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(intervalSeconds), stoppingToken);
         }
     }
 }
